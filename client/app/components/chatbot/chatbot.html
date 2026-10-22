@@ -1,0 +1,103 @@
+<!-- Floating AI Chatbot Launcher Button -->
+<button 
+  type="button" 
+  class="chatbot-fab-btn" 
+  ng-click="toggleChat()" 
+  aria-label="Ask CampusConnect AI">
+  <span class="pulsing-dot"></span>
+  <i class="fa-solid fa-robot"></i>
+  <span>Ask CampusConnect AI</span>
+</button>
+
+<!-- Floating Chat Window (ng-show / ng-if) -->
+<div class="chatbot-floating-window" ng-if="isOpen">
+  <!-- Header -->
+  <div class="chatbot-header">
+    <div class="d-flex align-items-center gap-2">
+      <div class="rounded-circle bg-primary bg-opacity-50 p-2 text-white d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+        <i class="fa-solid fa-graduation-cap"></i>
+      </div>
+      <div>
+        <h6 class="mb-0 fw-bold text-white fs-6">CampusConnect AI</h6>
+        <small class="text-white-50" style="font-size: 0.72rem;">Online | College Knowledge Base</small>
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <button type="button" class="btn btn-sm btn-link text-white-50 p-1" title="Clear Chat History" ng-click="clearChat()">
+        <i class="fa-solid fa-trash-can"></i>
+      </button>
+      <a href="#/chatbot" class="btn btn-sm btn-link text-white-50 p-1" title="Open Fullscreen View" ng-click="toggleChat()">
+        <i class="fa-solid fa-expand"></i>
+      </a>
+      <button type="button" class="btn btn-sm btn-link text-white p-1" title="Close" ng-click="toggleChat()">
+        <i class="fa-solid fa-xmark fs-5"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages List -->
+  <div class="chat-messages-container" id="chatbotMessagesList">
+    <!-- Welcome message -->
+    <div class="chat-bubble bot">
+      <div class="fw-semibold text-primary mb-1">
+        <i class="fa-solid fa-sparkles me-1"></i> Hello! I'm CampusConnect Assistant.
+      </div>
+      <p class="mb-2 small">
+        Ask me anything about engineering departments, cutoffs, tuition & hostel fees, bus transport routes, or campus placements!
+      </p>
+      <div class="chat-suggestions-chips">
+        <span class="suggestion-chip" ng-repeat="chip in initialChips" ng-click="sendQuick(chip)">
+          {{chip}}
+        </span>
+      </div>
+    </div>
+
+    <!-- Dynamic message history via ng-repeat -->
+    <div ng-repeat="msg in messages track by $index">
+      <div class="chat-bubble" ng-class="{'user': msg.sender === 'user', 'bot': msg.sender === 'bot'}">
+        <div class="fw-bold mb-1 small text-uppercase font-monospace opacity-75" style="font-size: 0.7rem;">
+          {{msg.sender === 'user' ? 'You' : 'CampusConnect AI'}}
+        </div>
+        <div class="chat-text" style="white-space: pre-line;" ng-bind-html="formatMessage(msg.text)"></div>
+        
+        <!-- Follow-up suggested chips if present -->
+        <div class="chat-suggestions-chips mt-2" ng-if="msg.suggestedFollowUps && msg.suggestedFollowUps.length > 0">
+          <span class="suggestion-chip" ng-repeat="chip in msg.suggestedFollowUps" ng-click="sendQuick(chip)">
+            <i class="fa-regular fa-comment-dots me-1"></i> {{chip}}
+          </span>
+        </div>
+
+        <div class="text-end text-muted mt-1" style="font-size: 0.65rem;">
+          {{msg.time | date:'shortTime'}}
+        </div>
+      </div>
+    </div>
+
+    <!-- Typing indicator (ng-if) -->
+    <div class="chat-bubble bot" ng-if="isThinking">
+      <div class="d-flex align-items-center gap-2 text-muted small py-1">
+        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+        <span>Searching college database & compiling guidance...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area with ng-model and form submit -->
+  <form class="chat-input-area" ng-submit="handleSend()">
+    <input 
+      type="text" 
+      class="form-control form-control-sm border-0 bg-light rounded-pill px-3 shadow-none" 
+      placeholder="Type your question here..." 
+      ng-model="userQuery" 
+      ng-disabled="isThinking"
+      autocomplete="off"
+      required>
+    <button 
+      type="submit" 
+      class="btn btn-primary btn-sm rounded-circle d-flex align-items-center justify-content-center" 
+      style="width: 36px; height: 36px;"
+      ng-disabled="isThinking || !userQuery">
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+  </form>
+</div>

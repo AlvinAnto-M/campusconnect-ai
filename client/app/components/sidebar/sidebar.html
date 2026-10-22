@@ -1,0 +1,139 @@
+<!-- CAMPUSCONNECT AI - Sidebar Component -->
+<aside class="app-sidebar" ng-controller="AuthController as auth">
+  <!-- Brand Header -->
+  <div class="sidebar-header">
+    <a href="#/" class="sidebar-brand">
+      <div class="sidebar-brand-icon">
+        <i class="fa-solid fa-graduation-cap"></i>
+      </div>
+      <div>
+        <div class="brand-title">CAMPUSCONNECT</div>
+        <div class="d-flex align-items-center gap-1 mt-1">
+          <span class="brand-badge">SMART PORTAL</span>
+          <span class="text-white-50" style="font-size: 0.65rem;">v2026.1</span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Navigation Links -->
+  <ul class="sidebar-nav">
+    <li class="nav-section-title">Main Navigation</li>
+
+    <li class="nav-item">
+      <a href="#/" class="nav-link-custom" ng-class="{'active': isActive('/')}">
+        <i class="fa-solid fa-gauge-high"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a href="#/departments" class="nav-link-custom" ng-class="{'active': isActive('/departments')}">
+        <i class="fa-solid fa-building-columns"></i>
+        <span>Departments</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a href="#/cutoffs" class="nav-link-custom" ng-class="{'active': isActive('/cutoffs')}">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Cutoffs & Predictor</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a href="#/fees" class="nav-link-custom" ng-class="{'active': isActive('/fees')}">
+        <i class="fa-solid fa-calculator"></i>
+        <span>Fees & Calculator</span>
+      </a>
+    </li>
+
+    <li class="nav-section-title">Campus & Facilities</li>
+
+    <li class="nav-item">
+      <a href="#/hostel" class="nav-link-custom" ng-class="{'active': isActive('/hostel')}">
+        <i class="fa-solid fa-hotel"></i>
+        <span>Hostel Life</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a href="#/transport" class="nav-link-custom" ng-class="{'active': isActive('/transport')}">
+        <i class="fa-solid fa-bus"></i>
+        <span>Bus & Transport</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a href="#/placements" class="nav-link-custom" ng-class="{'active': isActive('/placements')}">
+        <i class="fa-solid fa-briefcase"></i>
+        <span>Placement Cell</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a href="#/admission" class="nav-link-custom" ng-class="{'active': isActive('/admission')}">
+        <i class="fa-solid fa-clipboard-check"></i>
+        <span>Admissions 2026</span>
+      </a>
+    </li>
+
+    <li class="nav-section-title">AI Assistant</li>
+
+    <li class="nav-item">
+      <a href="#/chatbot" class="nav-link-custom" ng-class="{'active': isActive('/chatbot')}">
+        <i class="fa-solid fa-robot text-info"></i>
+        <span class="fw-bold text-info">CampusConnect AI</span>
+      </a>
+    </li>
+
+    <!-- Student / User Protected Links (ng-if) -->
+    <li class="nav-section-title" ng-if="auth.currentUser">My Space</li>
+
+    <li class="nav-item" ng-if="auth.currentUser">
+      <a href="#/profile" class="nav-link-custom" ng-class="{'active': isActive('/profile')}">
+        <i class="fa-solid fa-user-astronaut text-warning"></i>
+        <span>Student Profile</span>
+      </a>
+    </li>
+
+    <!-- Admin Portal Link (ng-if role === 'Admin') -->
+    <li class="nav-section-title text-danger" ng-if="auth.currentUser && auth.currentUser.role === 'Admin'">
+      Administration
+    </li>
+
+    <li class="nav-item" ng-if="auth.currentUser && auth.currentUser.role === 'Admin'">
+      <a href="#/admin" class="nav-link-custom text-warning" ng-class="{'active': isActive('/admin')}">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Admin Console</span>
+      </a>
+    </li>
+  </ul>
+
+  <!-- Sidebar Footer User Profile or Login CTA -->
+  <div class="sidebar-footer">
+    <div ng-if="auth.currentUser" class="user-mini-card">
+      <div class="user-avatar-circle">
+        {{auth.currentUser.name.charAt(0).toUpperCase()}}
+      </div>
+      <div class="flex-grow-1 overflow-hidden">
+        <div class="text-white fw-bold small text-truncate">{{auth.currentUser.name}}</div>
+        <div class="text-white-50" style="font-size: 0.72rem;">
+          <span class="badge bg-primary px-2 py-0" style="font-size: 0.65rem;">{{auth.currentUser.role}}</span>
+        </div>
+      </div>
+      <button type="button" class="btn btn-sm btn-link text-white-50 p-1" title="Sign Out" ng-click="auth.logout()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
+
+    <div ng-if="!auth.currentUser" class="d-grid gap-2">
+      <a href="#/login" class="btn btn-primary btn-sm rounded-pill fw-semibold">
+        <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Student Login
+      </a>
+      <a href="#/register" class="btn btn-outline-light btn-sm rounded-pill">
+        Create Account
+      </a>
+    </div>
+  </div>
+</aside>

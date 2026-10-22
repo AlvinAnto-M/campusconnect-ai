@@ -1,0 +1,164 @@
+<!-- CAMPUSCONNECT AI - Student Profile & Personalized Dashboard (FEATURE 4) -->
+<div class="container-fluid px-0">
+  <loading-spinner is-loading="vm.isLoading" message="Loading personalized student dashboard..."></loading-spinner>
+
+  <div ng-if="!vm.isLoading && vm.user">
+    <!-- Header Banner -->
+    <div class="card card-custom p-4 mb-4 border-0 shadow-sm bg-white">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="user-avatar-circle" style="width: 58px; height: 58px; font-size: 1.5rem;">
+            {{vm.user.name.charAt(0).toUpperCase()}}
+          </div>
+          <div>
+            <h4 class="fw-bold mb-1 text-dark font-sans">{{vm.user.name}}</h4>
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge bg-primary">{{vm.user.role}}</span>
+              <span class="badge bg-info-subtle text-info font-monospace">Rank #{{vm.user.counsellingRank || 'Not Set'}}</span>
+              <span class="badge bg-secondary-subtle text-secondary font-monospace">{{vm.user.category || 'OC'}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-end">
+          <small class="text-muted d-block font-monospace">MEMBER SINCE</small>
+          <span class="small fw-semibold text-dark">{{vm.user.createdAt | date:'mediumDate'}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personalized Recommendations Card (Based on counsellingRank) -->
+    <div class="card card-custom p-4 mb-4 border-0 shadow-sm border-start border-primary border-4 bg-white" ng-if="vm.user.counsellingRank">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h5 class="fw-bold text-primary mb-0 font-sans">
+          <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Personalized Branch Matches for Rank #{{vm.user.counsellingRank}} ({{vm.user.category}})
+        </h5>
+        <a href="#/cutoffs" class="small text-decoration-none">Full Predictor</a>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-4" ng-repeat="item in vm.recommendations">
+          <div class="p-3 rounded-3 bg-light border border-light-subtle h-100">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="badge bg-primary">{{item.department.code}}</span>
+              <cutoff-badge status="{{item.status}}"></cutoff-badge>
+            </div>
+            <h6 class="fw-bold text-dark mb-1">{{item.department.name}}</h6>
+            <div class="small text-muted mb-2">Historical Closing: #{{item.historicalClosingRank}}</div>
+            <a href="#/departments/{{item.department.id}}" class="btn btn-outline-primary btn-sm rounded-pill w-100">
+              Explore Department
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Left Column: Edit Profile & Rank Details -->
+      <div class="col-lg-5">
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white h-100">
+          <h5 class="fw-bold text-dark mb-3 font-sans">
+            <i class="fa-solid fa-user-pen text-primary me-2"></i>Update Rank Profile
+          </h5>
+
+          <form ng-submit="vm.saveProfile()">
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">FULL NAME</label>
+              <input type="text" class="form-control bg-light" ng-model="vm.editForm.name" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">PHONE NUMBER</label>
+              <input type="tel" class="form-control bg-light" ng-model="vm.editForm.phone">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">STATE COUNSELLING RANK</label>
+              <input type="number" class="form-control bg-light font-monospace" ng-model="vm.editForm.counsellingRank" placeholder="e.g. 4200">
+              <small class="text-muted" style="font-size: 0.72rem;">Updates your live admission chance evaluations.</small>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label small fw-bold text-muted">RESERVATION CATEGORY</label>
+              <select class="form-select bg-light" ng-model="vm.editForm.category">
+                <option value="OC">OC (Open Competition)</option>
+                <option value="BC">BC (Backward Class)</option>
+                <option value="BCM">BCM (Backward Class Muslim)</option>
+                <option value="MBC">MBC (Most Backward Class / DNC)</option>
+                <option value="SC">SC (Scheduled Caste)</option>
+                <option value="ST">ST (Scheduled Tribe)</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary rounded-pill w-100 py-2 fw-bold shadow-sm" ng-disabled="vm.isUpdating">
+              <span ng-if="vm.isUpdating"><i class="fa-solid fa-spinner fa-spin me-1"></i> Saving...</span>
+              <span ng-if="!vm.isUpdating"><i class="fa-solid fa-floppy-disk me-1"></i> Save Changes</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Column: Saved Favorites & Bookmarks -->
+      <div class="col-lg-7">
+        <!-- Bookmarked Departments -->
+        <div class="card card-custom p-4 mb-4 border-0 shadow-sm bg-white">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h5 class="fw-bold text-dark mb-0 font-sans">
+              <i class="fa-solid fa-heart text-danger me-2"></i>Saved Favorite Departments
+            </h5>
+            <span class="badge bg-light text-muted border">{{vm.user.favorites.departments.length || 0}} Saved</span>
+          </div>
+
+          <div ng-if="!vm.user.favorites.departments || vm.user.favorites.departments.length === 0" class="p-4 text-center text-muted bg-light rounded-3">
+            <i class="fa-regular fa-folder-open mb-2 fs-4 d-block"></i>
+            No departments saved yet. Explore the <a href="#/departments" class="fw-bold">Departments</a> page and click the heart icon.
+          </div>
+
+          <div class="d-flex flex-column gap-2" ng-if="vm.user.favorites.departments.length > 0">
+            <div class="p-3 rounded-3 bg-light border border-light-subtle d-flex align-items-center justify-content-between" ng-repeat="dept in vm.user.favorites.departments">
+              <div>
+                <span class="badge bg-primary me-2">{{dept.departmentCode}}</span>
+                <span class="fw-bold text-dark">{{dept.departmentName}}</span>
+                <div class="small text-muted">{{dept.degree}} | Intake: {{dept.intake}} Seats</div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <a href="#/departments/{{dept._id}}" class="btn btn-outline-primary btn-sm rounded-pill">View</a>
+                <button type="button" class="btn btn-sm btn-link text-danger" ng-click="vm.removeFavorite('departments', dept._id)" title="Remove">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bookmarked Placement Recruiters -->
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h5 class="fw-bold text-dark mb-0 font-sans">
+              <i class="fa-solid fa-bookmark text-primary me-2"></i>Bookmarked Placement Recruiters
+            </h5>
+            <span class="badge bg-light text-muted border">{{vm.user.favorites.placements.length || 0}} Saved</span>
+          </div>
+
+          <div ng-if="!vm.user.favorites.placements || vm.user.favorites.placements.length === 0" class="p-4 text-center text-muted bg-light rounded-3">
+            <i class="fa-regular fa-building mb-2 fs-4 d-block"></i>
+            No companies bookmarked yet. Explore the <a href="#/placements" class="fw-bold">Placements</a> page.
+          </div>
+
+          <div class="d-flex flex-column gap-2" ng-if="vm.user.favorites.placements.length > 0">
+            <div class="p-3 rounded-3 bg-light border border-light-subtle d-flex align-items-center justify-content-between" ng-repeat="comp in vm.user.favorites.placements">
+              <div>
+                <span class="fw-bold text-dark">{{comp.companyName}}</span>
+                <span class="badge bg-success-subtle text-success ms-2">{{comp.package}}</span>
+                <div class="small text-muted">{{comp.industry}} | {{comp.jobRole}}</div>
+              </div>
+              <button type="button" class="btn btn-sm btn-link text-danger" ng-click="vm.removeFavorite('placements', comp._id)" title="Remove">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

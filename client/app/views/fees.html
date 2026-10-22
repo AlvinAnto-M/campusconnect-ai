@@ -1,0 +1,329 @@
+<!-- CAMPUSCONNECT AI - Fees & Cost Calculator View -->
+<div class="container-fluid px-0">
+  <!-- Header Banner -->
+  <div class="card card-custom p-4 mb-4 border-0 shadow-sm bg-white">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <h3 class="fw-bold mb-1 text-dark font-sans">
+          <i class="fa-solid fa-calculator text-success me-2"></i>Fees & Student Cost Calculator
+        </h3>
+        <p class="text-muted mb-0 small">
+          Transparent fee breakdowns, multi-department cost comparisons, and dynamic 4-year education financial planner.
+        </p>
+      </div>
+
+      <!-- Tab Buttons -->
+      <ul class="nav nav-pills nav-pills-custom gap-2">
+        <li class="nav-item">
+          <button class="nav-link" ng-class="{'active': vm.activeTab === 'calculator'}" ng-click="vm.switchTab('calculator')">
+            <i class="fa-solid fa-calculator me-1"></i> Cost Calculator
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" ng-class="{'active': vm.activeTab === 'compare'}" ng-click="vm.switchTab('compare')">
+            <i class="fa-solid fa-scale-balanced me-1"></i> Compare Fees
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" ng-class="{'active': vm.activeTab === 'all-fees'}" ng-click="vm.switchTab('all-fees')">
+            <i class="fa-solid fa-list-check me-1"></i> Fee Structures
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- TAB 1: Student College Cost Calculator (FEATURE 2) -->
+  <div ng-if="vm.activeTab === 'calculator'">
+    <div class="row g-4">
+      <!-- Calculator Inputs Form -->
+      <div class="col-lg-5">
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white h-100">
+          <h5 class="fw-bold text-dark mb-3 font-sans">
+            <i class="fa-solid fa-sliders text-success me-2"></i>Configure Education Plan
+          </h5>
+
+          <form ng-submit="vm.runCalculation()">
+            <!-- Department Selection -->
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">TARGET DEPARTMENT</label>
+              <select class="form-select bg-light" ng-model="vm.calc.departmentId" ng-change="vm.runCalculation()" required>
+                <option ng-repeat="dept in vm.departments" value="{{dept._id}}">
+                  {{dept.departmentCode}} - {{dept.departmentName}}
+                </option>
+              </select>
+            </div>
+
+            <!-- Number of Years -->
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">PROGRAM DURATION</label>
+              <div class="btn-group w-100" role="group">
+                <input type="radio" class="btn-check" name="years" id="y1" value="1" ng-model="vm.calc.years" ng-change="vm.runCalculation()">
+                <label class="btn btn-outline-primary btn-sm" for="y1">1 Year</label>
+
+                <input type="radio" class="btn-check" name="years" id="y2" value="2" ng-model="vm.calc.years" ng-change="vm.runCalculation()">
+                <label class="btn btn-outline-primary btn-sm" for="y2">2 Years</label>
+
+                <input type="radio" class="btn-check" name="years" id="y3" value="3" ng-model="vm.calc.years" ng-change="vm.runCalculation()">
+                <label class="btn btn-outline-primary btn-sm" for="y3">3 Years (Lateral)</label>
+
+                <input type="radio" class="btn-check" name="years" id="y4" value="4" ng-model="vm.calc.years" ng-change="vm.runCalculation()">
+                <label class="btn btn-outline-primary btn-sm" for="y4">4 Years (Standard B.Tech)</label>
+              </div>
+            </div>
+
+            <!-- Hostel Required Switch -->
+            <div class="p-3 rounded-3 bg-light border border-light-subtle mb-3">
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="hostelCheck" ng-model="vm.calc.hostelRequired" ng-change="vm.runCalculation()">
+                <label class="form-check-label fw-bold text-dark small" for="hostelCheck">
+                  <i class="fa-solid fa-hotel text-warning me-1"></i> On-Campus Hostel Accommodation Required
+                </label>
+              </div>
+
+              <div ng-if="vm.calc.hostelRequired" class="mt-2 ps-3">
+                <label class="form-label small text-muted font-monospace">SELECT ROOM TYPE</label>
+                <select class="form-select form-select-sm bg-white" ng-model="vm.calc.hostelRoomFee" ng-change="vm.runCalculation()">
+                  <option value="115000">2-Sharing Deluxe AC (₹1,15,000 / yr)</option>
+                  <option value="85000">3-Sharing Non-AC Standard (₹85,000 / yr)</option>
+                  <option value="72000">4-Sharing Economy (₹72,000 / yr)</option>
+                </select>
+                <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">Includes hygienic steam-cooked mess and 24/7 Wi-Fi.</small>
+              </div>
+            </div>
+
+            <!-- Transport Required Switch -->
+            <div class="p-3 rounded-3 bg-light border border-light-subtle mb-3">
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="transportCheck" ng-model="vm.calc.transportRequired" ng-change="vm.runCalculation()">
+                <label class="form-check-label fw-bold text-dark small" for="transportCheck">
+                  <i class="fa-solid fa-bus text-danger me-1"></i> College Bus Transport Required (Day Scholar)
+                </label>
+              </div>
+
+              <div ng-if="vm.calc.transportRequired" class="mt-2 ps-3">
+                <label class="form-label small text-muted font-monospace">ROUTE CORRIDOR TIER</label>
+                <select class="form-select form-select-sm bg-white" ng-model="vm.calc.transportRouteFee" ng-change="vm.runCalculation()">
+                  <option value="30000">Suburban / Near Zone (₹30,000 / yr)</option>
+                  <option value="32000">Standard City Route (₹32,000 / yr)</option>
+                  <option value="36000">Express Extended Route (₹36,000 / yr)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Merit Scholarship Percentage -->
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted d-flex justify-content-between">
+                <span>MERIT SCHOLARSHIP CONCESSION</span>
+                <span class="text-success fw-bold">{{vm.calc.scholarshipPercent}}% Off Tuition</span>
+              </label>
+              <input 
+                type="range" 
+                class="form-range" 
+                min="0" 
+                max="50" 
+                step="10" 
+                ng-model="vm.calc.scholarshipPercent" 
+                ng-change="vm.runCalculation()">
+              <div class="d-flex justify-content-between text-muted small" style="font-size: 0.72rem;">
+                <span>0% (Regular)</span>
+                <span>25% (Merit Tier 2)</span>
+                <span>50% (Merit Tier 1)</span>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Calculation Breakdown Result (FEATURE 2) -->
+      <div class="col-lg-7">
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white h-100" ng-if="vm.calcResult">
+          <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+            <div>
+              <span class="badge bg-primary">{{vm.calcResult.degree}}</span>
+              <h5 class="fw-bold text-dark mt-1 mb-0">{{vm.calcResult.department}}</h5>
+            </div>
+            <span class="badge bg-success-subtle text-success fs-6 px-3 py-2">
+              {{vm.calcResult.years}}-Year Academic Cost Model
+            </span>
+          </div>
+
+          <!-- Grand Total Estimated Cost Highlight Banner -->
+          <div class="p-4 rounded-4 mb-4 text-center shadow-sm" style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: #ffffff;">
+            <small class="text-uppercase letter-spacing-1 fw-bold opacity-75">Estimated Total Education Cost</small>
+            <!-- Using custom currencyFormat filter -->
+            <h2 class="display-6 fw-bold mb-1">{{vm.calcResult.programSummary.grandTotalEstimatedCost | currencyFormat}}</h2>
+            <small class="opacity-90">
+              For complete {{vm.calcResult.years}} year(s) duration including academic and selected auxiliary services.
+            </small>
+          </div>
+
+          <!-- Annual Breakdown Table -->
+          <h6 class="fw-bold text-dark mb-2 font-sans">Annual Expense Breakdown (Per Year)</h6>
+          <div class="table-responsive mb-4">
+            <table class="table table-sm table-custom mb-0">
+              <tbody>
+                <tr>
+                  <td>Base Annual Tuition:</td>
+                  <td class="text-end fw-semibold">{{vm.calcResult.annualBreakdown.tuitionFee | currencyFormat}}</td>
+                </tr>
+                <tr ng-if="vm.calcResult.annualBreakdown.scholarshipDiscount > 0">
+                  <td class="text-success"><i class="fa-solid fa-tag me-1"></i> Merit Scholarship Discount:</td>
+                  <td class="text-end text-success fw-bold">- {{vm.calcResult.annualBreakdown.scholarshipDiscount | currencyFormat}}</td>
+                </tr>
+                <tr>
+                  <td>Examination & Tech Fees:</td>
+                  <td class="text-end">{{vm.calcResult.annualBreakdown.examinationFee | currencyFormat}}</td>
+                </tr>
+                <tr>
+                  <td>Lab, Digital Library & Other Amenities:</td>
+                  <td class="text-end">{{vm.calcResult.annualBreakdown.otherFees | currencyFormat}}</td>
+                </tr>
+                <tr ng-if="vm.calcResult.annualBreakdown.hostelFee > 0">
+                  <td>Hostel & Dining Mess:</td>
+                  <td class="text-end fw-semibold text-warning">{{vm.calcResult.annualBreakdown.hostelFee | currencyFormat}}</td>
+                </tr>
+                <tr ng-if="vm.calcResult.annualBreakdown.transportFee > 0">
+                  <td>Bus & Transit Service:</td>
+                  <td class="text-end fw-semibold text-danger">{{vm.calcResult.annualBreakdown.transportFee | currencyFormat}}</td>
+                </tr>
+                <tr class="table-light">
+                  <td class="fw-bold text-primary">Estimated Net Cost Per Year:</td>
+                  <td class="text-end fw-bold text-primary fs-6">{{vm.calcResult.annualBreakdown.totalAnnualEstimate | currencyFormat}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Complete Program Summary -->
+          <h6 class="fw-bold text-dark mb-2 font-sans">Full {{vm.calcResult.years}}-Year Program Cost Distribution</h6>
+          <div class="row g-2">
+            <div class="col-sm-4">
+              <div class="p-2 rounded bg-light border border-light-subtle text-center">
+                <small class="text-muted d-block font-monospace">ACADEMIC COST</small>
+                <strong class="text-dark">{{vm.calcResult.programSummary.totalAcademicCost | currencyFormat}}</strong>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="p-2 rounded bg-light border border-light-subtle text-center">
+                <small class="text-muted d-block font-monospace">RESIDENCE COST</small>
+                <strong class="text-dark">{{vm.calcResult.programSummary.totalHostelCost | currencyFormat}}</strong>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="p-2 rounded bg-light border border-light-subtle text-center">
+                <small class="text-muted d-block font-monospace">TOTAL SAVINGS</small>
+                <strong class="text-success">{{vm.calcResult.programSummary.totalScholarshipSavings | currencyFormat}}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Fee Comparison Module (Side-by-side) -->
+  <div ng-if="vm.activeTab === 'compare'">
+    <div class="card card-custom p-4 mb-4 border-0 shadow-sm bg-white">
+      <h5 class="fw-bold text-dark mb-3 font-sans">
+        <i class="fa-solid fa-scale-balanced text-primary me-2"></i>Compare Department Fee Structures Side-by-Side
+      </h5>
+      <p class="text-muted small mb-4">
+        Select departments to compare annual tuition, lab costs, and examination fees in a unified matrix.
+      </p>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-custom mb-0">
+          <thead>
+            <tr class="table-light">
+              <th style="width: 25%;">Fee Component</th>
+              <th ng-repeat="fee in vm.feeList | limitTo: 4">
+                <span class="badge bg-primary">{{fee.departmentId.departmentCode}}</span>
+                <div class="fw-bold text-dark mt-1">{{fee.departmentId.departmentName}}</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-bold text-muted bg-light">Annual Tuition Fee</td>
+              <!-- Using custom currencyFormat filter -->
+              <td ng-repeat="fee in vm.feeList | limitTo: 4" class="fw-bold text-dark">
+                {{fee.tuitionFee | currencyFormat}}
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-bold text-muted bg-light">Examination & Assessment</td>
+              <td ng-repeat="fee in vm.feeList | limitTo: 4">{{fee.examinationFee | currencyFormat}}</td>
+            </tr>
+            <tr>
+              <td class="fw-bold text-muted bg-light">Specialized Labs & Development</td>
+              <td ng-repeat="fee in vm.feeList | limitTo: 4">{{fee.otherFees | currencyFormat}}</td>
+            </tr>
+            <tr class="table-success">
+              <td class="fw-bold text-success">Total Annual Academic Fee</td>
+              <td ng-repeat="fee in vm.feeList | limitTo: 4" class="fw-bold text-success fs-6">
+                {{fee.totalAnnualFee | currencyFormat}}
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-bold text-muted bg-light">Estimated 4-Year Tuition</td>
+              <td ng-repeat="fee in vm.feeList | limitTo: 4" class="fw-bold text-primary">
+                {{(fee.totalAnnualFee * 4) | currencyFormat}}
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-bold text-muted bg-light">Scholarship Benefits</td>
+              <td ng-repeat="fee in vm.feeList | limitTo: 4" class="small text-muted">
+                {{fee.scholarshipDetails}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: All Fee Structures Card Directory -->
+  <div ng-if="vm.activeTab === 'all-fees'">
+    <div class="row g-4">
+      <div class="col-md-6 col-xl-4" ng-repeat="fee in vm.feeList">
+        <div class="card card-custom p-4 border-0 shadow-sm h-100 bg-white">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="badge bg-primary font-monospace">{{fee.departmentId.departmentCode}}</span>
+            <span class="badge bg-success-subtle text-success">Academic Year 2026</span>
+          </div>
+
+          <h5 class="fw-bold text-dark mb-1">{{fee.departmentId.departmentName}}</h5>
+          <small class="text-muted d-block mb-3">{{fee.departmentId.degree}}</small>
+
+          <div class="p-3 rounded-3 bg-light border border-light-subtle mb-3">
+            <div class="d-flex justify-content-between small py-1 border-bottom border-light-subtle">
+              <span class="text-muted">Tuition Fee:</span>
+              <strong class="text-dark">{{fee.tuitionFee | currencyFormat}}</strong>
+            </div>
+            <div class="d-flex justify-content-between small py-1 border-bottom border-light-subtle">
+              <span class="text-muted">Examination Fee:</span>
+              <strong class="text-dark">{{fee.examinationFee | currencyFormat}}</strong>
+            </div>
+            <div class="d-flex justify-content-between small py-1 border-bottom border-light-subtle">
+              <span class="text-muted">Labs & Amenities:</span>
+              <strong class="text-dark">{{fee.otherFees | currencyFormat}}</strong>
+            </div>
+            <div class="d-flex justify-content-between pt-2">
+              <span class="fw-bold text-primary">Total Annual Fee:</span>
+              <strong class="text-primary fs-6">{{fee.totalAnnualFee | currencyFormat}}</strong>
+            </div>
+          </div>
+
+          <div class="small text-muted mb-3 flex-grow-1">
+            <i class="fa-solid fa-gift text-warning me-1"></i> {{fee.scholarshipDetails}}
+          </div>
+
+          <button type="button" class="btn btn-outline-primary btn-sm rounded-pill w-100" ng-click="vm.calc.departmentId = fee.departmentId._id; vm.switchTab('calculator'); vm.runCalculation()">
+            Load into 4-Year Calculator <i class="fa-solid fa-calculator ms-1"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

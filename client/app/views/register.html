@@ -1,0 +1,140 @@
+<!-- CAMPUSCONNECT AI - Register View -->
+<div class="row justify-content-center py-4">
+  <div class="col-md-9 col-lg-7">
+    <div class="card card-custom p-4 p-md-5 border-0 shadow-lg">
+      <div class="text-center mb-4">
+        <div class="stat-icon bg-info text-dark mx-auto mb-3 shadow">
+          <i class="fa-solid fa-user-plus"></i>
+        </div>
+        <h3 class="fw-bold text-dark">Create Your Portal Account</h3>
+        <p class="text-muted small">Personalize your admission guidance, cutoff tracking, and college comparisons</p>
+      </div>
+
+      <!-- Alert on Error -->
+      <div class="alert alert-danger py-2 small" ng-if="vm.errorMessage">
+        <i class="fa-solid fa-triangle-exclamation me-1"></i> {{vm.errorMessage}}
+      </div>
+
+      <!-- Registration Form -->
+      <form name="registerForm" ng-submit="vm.register(registerForm)" novalidate>
+        <div class="row g-3">
+          <!-- Full Name -->
+          <div class="col-md-6">
+            <label class="form-label small fw-bold text-muted">FULL NAME</label>
+            <input 
+              type="text" 
+              name="name" 
+              class="form-control bg-light" 
+              placeholder="e.g. Rohit Sharma" 
+              ng-model="vm.registerData.name" 
+              required
+              ng-class="{'is-invalid': registerForm.name.$dirty && registerForm.name.$invalid}">
+            <div class="invalid-feedback" ng-if="registerForm.name.$dirty && registerForm.name.$invalid">
+              Name is required.
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="col-md-6">
+            <label class="form-label small fw-bold text-muted">EMAIL ADDRESS</label>
+            <input 
+              type="email" 
+              name="email" 
+              class="form-control bg-light" 
+              placeholder="e.g. rohit@gmail.com" 
+              ng-model="vm.registerData.email" 
+              required
+              ng-class="{'is-invalid': registerForm.email.$dirty && registerForm.email.$invalid}">
+            <div class="invalid-feedback" ng-if="registerForm.email.$dirty && registerForm.email.$invalid">
+              Valid email is required.
+            </div>
+          </div>
+
+          <!-- Password with Custom Directive -->
+          <div class="col-12">
+            <label class="form-label small fw-bold text-muted">PASSWORD</label>
+            <input 
+              type="password" 
+              name="password" 
+              class="form-control bg-light" 
+              placeholder="Create a strong password (min 6 characters)" 
+              ng-model="vm.registerData.password" 
+              required
+              minlength="6"
+              ng-class="{'is-invalid': registerForm.password.$dirty && registerForm.password.$invalid}">
+            
+            <!-- Custom Directive: Password Strength Meter -->
+            <password-strength password="vm.registerData.password"></password-strength>
+            
+            <div class="invalid-feedback" ng-if="registerForm.password.$dirty && registerForm.password.$invalid">
+              Password must be at least 6 characters long.
+            </div>
+          </div>
+
+          <!-- Role Selection -->
+          <div class="col-md-6">
+            <label class="form-label small fw-bold text-muted">ACCOUNT ROLE</label>
+            <select class="form-select bg-light" ng-model="vm.registerData.role" required>
+              <option value="Student">Current College Student</option>
+              <option value="Prospective Student">Prospective Student / 12th Completed</option>
+              <option value="Admin">Administrator</option>
+            </select>
+          </div>
+
+          <!-- Phone Number -->
+          <div class="col-md-6">
+            <label class="form-label small fw-bold text-muted">PHONE NUMBER</label>
+            <input 
+              type="tel" 
+              name="phone" 
+              class="form-control bg-light" 
+              placeholder="e.g. +91 98400 12345" 
+              ng-model="vm.registerData.phone">
+          </div>
+
+          <!-- Counselling Rank -->
+          <div class="col-md-6">
+            <label class="form-label small fw-bold text-muted">STATE COUNSELLING RANK (Optional)</label>
+            <input 
+              type="number" 
+              name="counsellingRank" 
+              class="form-control bg-light" 
+              placeholder="e.g. 4200" 
+              ng-model="vm.registerData.counsellingRank">
+            <small class="text-muted" style="font-size: 0.72rem;">Enables automatic personalized branch recommendations</small>
+          </div>
+
+          <!-- Reservation Category -->
+          <div class="col-md-6">
+            <label class="form-label small fw-bold text-muted">RESERVATION CATEGORY</label>
+            <select class="form-select bg-light" ng-model="vm.registerData.category">
+              <option value="OC">OC (Open Competition / General)</option>
+              <option value="BC">BC (Backward Class)</option>
+              <option value="BCM">BCM (Backward Class Muslim)</option>
+              <option value="MBC">MBC (Most Backward Class / DNC)</option>
+              <option value="SC">SC (Scheduled Caste)</option>
+              <option value="ST">ST (Scheduled Tribe)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="mt-4">
+          <button 
+            type="submit" 
+            class="btn btn-primary w-100 py-2 rounded-pill fw-bold shadow-sm" 
+            ng-disabled="vm.isLoading || registerForm.$invalid">
+            <span ng-if="vm.isLoading"><i class="fa-solid fa-spinner fa-spin me-1"></i> Creating Account...</span>
+            <span ng-if="!vm.isLoading"><i class="fa-solid fa-check-circle me-1"></i> Complete Registration</span>
+          </button>
+        </div>
+      </form>
+
+      <div class="text-center mt-4 pt-3 border-top border-light-subtle">
+        <small class="text-muted">
+          Already registered? <a href="#/login" class="text-primary fw-bold text-decoration-none">Sign In to Your Account</a>
+        </small>
+      </div>
+    </div>
+  </div>
+</div>

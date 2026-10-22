@@ -1,0 +1,100 @@
+<!-- CAMPUSCONNECT AI - Login View -->
+<div class="row justify-content-center py-4">
+  <div class="col-md-8 col-lg-5">
+    <div class="card card-custom p-4 p-md-5 border-0 shadow-lg">
+      <div class="text-center mb-4">
+        <div class="stat-icon bg-primary text-white mx-auto mb-3 shadow">
+          <i class="fa-solid fa-lock"></i>
+        </div>
+        <h3 class="fw-bold text-dark">Portal Sign In</h3>
+        <p class="text-muted small">Access your personalized college guidance dashboard</p>
+      </div>
+
+      <!-- Alert on Error -->
+      <div id="errorMessage" class="alert alert-danger py-2 small error-message" ng-if="vm.errorMessage">
+        <i class="fa-solid fa-triangle-exclamation me-1"></i> <span id="errorText">{{vm.errorMessage}}</span>
+      </div>
+
+      <!-- Login Form with AngularJS Form Validation -->
+      <form name="loginForm" ng-submit="vm.login(loginForm)" novalidate>
+        <!-- Email Input -->
+        <div class="mb-3">
+          <label class="form-label small fw-bold text-muted">EMAIL ADDRESS</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-envelope text-muted"></i></span>
+            <input 
+              type="email" 
+              id="email"
+              name="email" 
+              class="form-control bg-light border-start-0" 
+              placeholder="e.g. student@campusconnect.edu" 
+              ng-model="vm.loginData.email" 
+              required
+              ng-class="{'is-invalid': loginForm.email.$dirty && loginForm.email.$invalid}">
+          </div>
+          <div class="invalid-feedback d-block" ng-if="loginForm.email.$dirty && loginForm.email.$invalid">
+            Please enter a valid institutional or personal email address.
+          </div>
+        </div>
+
+        <!-- Password Input -->
+        <div class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label class="form-label small fw-bold text-muted mb-0">PASSWORD</label>
+            <a href="javascript:void(0)" class="small text-decoration-none text-muted">Forgot password?</a>
+          </div>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-key text-muted"></i></span>
+            <input 
+              type="password" 
+              id="password"
+              name="password" 
+              class="form-control bg-light border-start-0" 
+              placeholder="Enter your password" 
+              ng-model="vm.loginData.password" 
+              required
+              minlength="6"
+              ng-class="{'is-invalid': loginForm.password.$dirty && loginForm.password.$invalid}">
+          </div>
+          <div class="invalid-feedback d-block" ng-if="loginForm.password.$dirty && loginForm.password.$invalid">
+            Password must be at least 6 characters long.
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          id="loginBtn"
+          class="btn btn-primary w-100 py-2 rounded-pill fw-bold shadow-sm" 
+          ng-disabled="vm.isLoading || loginForm.$invalid">
+          <span ng-if="vm.isLoading"><i class="fa-solid fa-spinner fa-spin me-1"></i> Authenticating...</span>
+          <span ng-if="!vm.isLoading"><i class="fa-solid fa-right-to-bracket me-1"></i> Sign In to Portal</span>
+        </button>
+      </form>
+
+      <!-- Demo Accounts Helper for Quick Viva Evaluation -->
+      <div class="mt-4 pt-3 border-top border-light-subtle">
+        <small class="text-uppercase text-muted fw-bold font-monospace d-block text-center mb-2" style="font-size: 0.72rem;">
+          Quick Demo Credentials (Click to fill)
+        </small>
+        <div class="d-grid gap-2">
+          <button type="button" class="btn btn-outline-secondary btn-sm text-start" ng-click="vm.loginData.email='student@campusconnect.edu'; vm.loginData.password='Student@123'">
+            <i class="fa-solid fa-user-graduate me-2 text-primary"></i> <strong>Student Account:</strong> student@campusconnect.edu
+          </button>
+          <button type="button" class="btn btn-outline-secondary btn-sm text-start" ng-click="vm.loginData.email='admin@campusconnect.edu'; vm.loginData.password='Admin@123'">
+            <i class="fa-solid fa-user-shield me-2 text-danger"></i> <strong>Admin Account:</strong> admin@campusconnect.edu
+          </button>
+          <button type="button" class="btn btn-outline-secondary btn-sm text-start" ng-click="vm.loginData.email='prospect@campusconnect.edu'; vm.loginData.password='Prospect@123'">
+            <i class="fa-solid fa-compass me-2 text-info"></i> <strong>Prospective Student:</strong> prospect@campusconnect.edu
+          </button>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <small class="text-muted">
+          Don't have an account? <a href="#/register" class="text-primary fw-bold text-decoration-none">Create New Student Account</a>
+        </small>
+      </div>
+    </div>
+  </div>
+</div>

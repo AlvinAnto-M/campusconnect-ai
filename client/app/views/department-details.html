@@ -1,0 +1,167 @@
+<!-- CAMPUSCONNECT AI - Department Details View -->
+<div class="container-fluid px-0">
+  <loading-spinner is-loading="vm.isLoading" message="Loading department profile, laboratories and cutoff records..."></loading-spinner>
+
+  <div ng-if="!vm.isLoading && vm.currentDepartment">
+    <!-- Back Navigation Breadcrumb -->
+    <div class="mb-3">
+      <a href="#/departments" class="btn btn-outline-secondary btn-sm rounded-pill">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back to All Departments
+      </a>
+    </div>
+
+    <!-- Header Hero Banner -->
+    <div class="card card-custom p-4 p-md-5 mb-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); color: #fff;">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="badge bg-primary px-3 py-2 fs-6 font-monospace">{{vm.currentDepartment.departmentCode}}</span>
+            <span class="badge bg-info-subtle text-info px-3 py-2 fs-6">{{vm.currentDepartment.degree}}</span>
+            <span class="badge bg-success-subtle text-success px-3 py-2 fs-6">{{vm.currentDepartment.duration}}</span>
+          </div>
+          <h2 class="text-white fw-bold mb-2">{{vm.currentDepartment.departmentName}}</h2>
+          <p class="text-white-50 lead fs-6 mb-3">{{vm.currentDepartment.description}}</p>
+
+          <div class="d-flex flex-wrap gap-4 text-light small">
+            <span><i class="fa-solid fa-users-gear text-info me-1"></i> Approved Intake: <strong>{{vm.currentDepartment.intake}} Seats</strong></span>
+            <span><i class="fa-solid fa-user-tie text-warning me-1"></i> HOD: <strong>{{vm.currentDepartment.hod.name}}</strong></span>
+            <span><i class="fa-solid fa-envelope text-success me-1"></i> {{vm.currentDepartment.hod.email}}</span>
+          </div>
+        </div>
+
+        <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+          <div class="p-3 bg-white bg-opacity-10 rounded-4 border border-white border-opacity-10 d-inline-block text-start w-100">
+            <h6 class="text-white fw-bold mb-2"><i class="fa-solid fa-graduation-cap text-info me-2"></i>Quick Actions</h6>
+            <a href="#/cutoffs" class="btn btn-primary btn-sm rounded-pill w-100 mb-2">
+              <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Check Rank Probability
+            </a>
+            <a href="#/fees" class="btn btn-outline-light btn-sm rounded-pill w-100">
+              <i class="fa-solid fa-calculator me-1"></i> Calculate 4-Year Cost
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Department Content Tabs & Grid -->
+    <div class="row g-4 mb-4">
+      <!-- Left Column: Curriculum, Facilities, Labs, Careers -->
+      <div class="col-lg-7">
+        <!-- Eligibility Card -->
+        <div class="card card-custom p-4 mb-4 border-0 shadow-sm bg-white">
+          <h5 class="fw-bold text-dark mb-2 font-sans">
+            <i class="fa-solid fa-circle-check text-success me-2"></i>Admission Eligibility Criteria
+          </h5>
+          <p class="text-muted mb-0 small">
+            {{vm.currentDepartment.eligibility}}
+          </p>
+        </div>
+
+        <!-- Specialized Facilities & Labs -->
+        <div class="card card-custom p-4 mb-4 border-0 shadow-sm bg-white">
+          <h5 class="fw-bold text-dark mb-3 font-sans">
+            <i class="fa-solid fa-flask-vial text-primary me-2"></i>Specialized Laboratories & Centers of Excellence
+          </h5>
+          <div class="row g-2 mb-3">
+            <div class="col-md-6" ng-repeat="fac in vm.currentDepartment.facilities">
+              <div class="p-3 rounded-3 bg-light border border-light-subtle d-flex align-items-center gap-2">
+                <i class="fa-solid fa-microchip text-primary"></i>
+                <span class="small fw-semibold text-dark">{{fac}}</span>
+              </div>
+            </div>
+          </div>
+
+          <h6 class="fw-bold text-dark mb-2 small text-uppercase font-monospace text-muted">Department Core Labs</h6>
+          <ul class="list-group list-group-flush small">
+            <li class="list-group-item px-0 py-2 d-flex align-items-center gap-2" ng-repeat="lab in vm.currentDepartment.labs">
+              <i class="fa-solid fa-desktop text-secondary"></i> {{lab}}
+            </li>
+          </ul>
+        </div>
+
+        <!-- Career Pathways -->
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white">
+          <h5 class="fw-bold text-dark mb-3 font-sans">
+            <i class="fa-solid fa-briefcase text-info me-2"></i>Career Opportunities & Job Roles
+          </h5>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="badge bg-primary-subtle text-primary p-2 px-3 fs-6 rounded-pill" ng-repeat="career in vm.currentDepartment.careerOptions">
+              <i class="fa-solid fa-check me-1"></i> {{career}}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Related Cutoffs & Related Fees -->
+      <div class="col-lg-5">
+        <!-- Related Fee Structure Card -->
+        <div class="card card-custom p-4 mb-4 border-0 shadow-sm bg-white" ng-if="vm.relatedFee">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h6 class="fw-bold text-dark mb-0 font-sans">
+              <i class="fa-solid fa-receipt text-success me-2"></i>Annual Academic Fee Structure
+            </h6>
+            <span class="badge bg-success-subtle text-success">Academic Year 2026</span>
+          </div>
+
+          <div class="p-3 rounded-3 bg-light border border-light-subtle mb-3">
+            <div class="d-flex justify-content-between py-1 border-bottom border-light-subtle small">
+              <span class="text-muted">Tuition Fee:</span>
+              <strong class="text-dark">{{vm.relatedFee.tuitionFee | currencyFormat}}</strong>
+            </div>
+            <div class="d-flex justify-content-between py-1 border-bottom border-light-subtle small">
+              <span class="text-muted">Examination & Tech Fee:</span>
+              <strong class="text-dark">{{vm.relatedFee.examinationFee | currencyFormat}}</strong>
+            </div>
+            <div class="d-flex justify-content-between py-1 border-bottom border-light-subtle small">
+              <span class="text-muted">Lab, Library & Other Amenities:</span>
+              <strong class="text-dark">{{vm.relatedFee.otherFees | currencyFormat}}</strong>
+            </div>
+            <div class="d-flex justify-content-between pt-2 fs-6">
+              <span class="fw-bold text-primary">Total Annual Academic Fee:</span>
+              <strong class="text-primary">{{vm.relatedFee.totalAnnualFee | currencyFormat}}</strong>
+            </div>
+          </div>
+
+          <div class="small text-muted mb-3" ng-if="vm.relatedFee.scholarshipDetails">
+            <i class="fa-solid fa-tag text-warning me-1"></i> <strong>Scholarship:</strong> {{vm.relatedFee.scholarshipDetails}}
+          </div>
+
+          <a href="#/fees" class="btn btn-outline-primary btn-sm rounded-pill w-100">
+            Customize in Fee Calculator <i class="fa-solid fa-arrow-right ms-1"></i>
+          </a>
+        </div>
+
+        <!-- Related Historical Cutoffs Card -->
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h6 class="fw-bold text-dark mb-0 font-sans">
+              <i class="fa-solid fa-chart-line text-primary me-2"></i>Historical Closing Cutoffs
+            </h6>
+            <a href="#/cutoffs" class="small text-decoration-none">Full Tool</a>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-sm table-custom mb-0">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>Category</th>
+                  <th>Cutoff</th>
+                  <th class="text-end">Closing Rank</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="cut in vm.relatedCutoffs | limitTo: 8">
+                  <td><span class="badge bg-light text-dark">{{cut.academicYear}}</span></td>
+                  <td><span class="badge bg-primary-subtle text-primary">{{cut.category}}</span></td>
+                  <td class="fw-bold text-dark">{{cut.closingCutoff | cutoffFormat}}</td>
+                  <td class="text-end text-primary font-monospace">{{cut.closingRank | cutoffRankFormat}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<div class="card card-custom p-3 border-0 shadow-sm mb-3">
+  <div class="d-flex align-items-center justify-content-between">
+    <div>
+      <span class="badge bg-primary-subtle text-primary fw-bold">{{cutoff.departmentId.departmentCode || 'DEPT'}}</span>
+      <span class="badge bg-secondary-subtle text-dark ms-1">{{cutoff.category}}</span>
+      <span class="badge bg-light text-muted ms-1">{{cutoff.quota}}</span>
+    </div>
+    <span class="badge bg-info text-dark fw-bold">{{cutoff.academicYear}}</span>
+  </div>
+  <div class="mt-2 d-flex align-items-baseline justify-content-between">
+    <div>
+      <small class="text-muted d-block font-monospace">CLOSING CUTOFF</small>
+      <span class="fs-5 fw-bold text-dark">{{cutoff.closingCutoff | cutoffFormat}}</span>
+    </div>
+    <div class="text-end">
+      <small class="text-muted d-block font-monospace">CLOSING RANK</small>
+      <span class="fw-bold text-primary">{{cutoff.closingRank | cutoffRankFormat}}</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,80 @@
+<div class="card card-custom card-hover h-100 border-0 shadow-sm position-relative">
+  <!-- Card Header with Department Accent Color & Badge -->
+  <div class="p-4 border-bottom border-light">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <div class="d-flex align-items-center gap-2">
+        <div class="stat-icon m-0" style="background-color: rgba(37, 99, 235, 0.1); color: {{department.color || '#2563eb'}};">
+          <i class="fa-solid {{department.icon || 'fa-graduation-cap'}}"></i>
+        </div>
+        <div>
+          <span class="badge bg-primary-subtle text-primary fw-bold">{{department.departmentCode}}</span>
+          <span class="badge bg-secondary-subtle text-secondary ms-1">{{department.degree}}</span>
+        </div>
+      </div>
+      <button 
+        type="button" 
+        class="btn btn-sm btn-light rounded-circle shadow-none p-2" 
+        title="Toggle Favorite"
+        ng-click="toggleFav($event)">
+        <i class="fa-heart" ng-class="{'fa-solid text-danger': isFavorite, 'fa-regular text-muted': !isFavorite}"></i>
+      </button>
+    </div>
+    
+    <h5 class="fw-bold text-dark mb-1">
+      <a href="#/departments/{{department._id}}" class="text-decoration-none text-dark hover-primary">
+        {{department.departmentName}}
+      </a>
+    </h5>
+    <p class="text-muted small mb-0 line-clamp-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+      {{department.description}}
+    </p>
+  </div>
+
+  <!-- Card Body with Key Metrics -->
+  <div class="p-4 flex-grow-1">
+    <div class="row g-2 mb-3 text-center">
+      <div class="col-6">
+        <div class="p-2 rounded-3 bg-light border border-light-subtle">
+          <small class="text-muted d-block font-monospace">APPROVED INTAKE</small>
+          <span class="fw-bold text-dark fs-6">{{department.intake}} Seats</span>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="p-2 rounded-3 bg-light border border-light-subtle">
+          <small class="text-muted d-block font-monospace">DURATION</small>
+          <span class="fw-bold text-dark fs-6">{{department.duration}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Career Opportunities tags -->
+    <div class="mb-3">
+      <small class="text-uppercase text-muted fw-bold font-monospace d-block mb-1" style="font-size: 0.72rem;">Career Pathways</small>
+      <div class="d-flex flex-wrap gap-1">
+        <span class="badge bg-light text-secondary border border-light-subtle font-weight-normal py-1 px-2" ng-repeat="opt in department.careerOptions | limitTo: 3">
+          {{opt}}
+        </span>
+      </div>
+    </div>
+
+    <!-- Facilities highlight -->
+    <div>
+      <small class="text-uppercase text-muted fw-bold font-monospace d-block mb-1" style="font-size: 0.72rem;">Specialized Labs</small>
+      <ul class="list-unstyled small text-muted mb-0 ps-1">
+        <li ng-repeat="fac in department.facilities | limitTo: 2" class="text-truncate">
+          <i class="fa-solid fa-check text-success me-1"></i> {{fac}}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card Footer CTA -->
+  <div class="p-3 bg-light border-top border-light-subtle d-flex align-items-center justify-content-between">
+    <a href="#/departments/{{department._id}}" class="btn btn-outline-primary btn-sm rounded-pill fw-semibold">
+      View Details <i class="fa-solid fa-arrow-right ms-1"></i>
+    </a>
+    <a href="#/cutoffs" class="btn btn-link btn-sm text-decoration-none text-muted">
+      Check Cutoff <i class="fa-solid fa-chart-simple ms-1"></i>
+    </a>
+  </div>
+</div>

@@ -1,0 +1,136 @@
+<!-- CAMPUSCONNECT AI - Transport & Bus Routes View -->
+<div class="container-fluid px-0">
+  <loading-spinner is-loading="vm.isLoading" message="Loading bus routes and boarding point timetables..."></loading-spinner>
+
+  <div ng-if="!vm.isLoading">
+    <!-- Header Banner -->
+    <div class="card card-custom p-4 mb-4 border-0 shadow-sm bg-white">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div>
+          <h3 class="fw-bold mb-1 text-dark font-sans">
+            <i class="fa-solid fa-bus text-danger me-2"></i>Campus Bus Transport & Transit Network
+          </h3>
+          <p class="text-muted mb-0 small">
+            Dedicated fleet of air-conditioned and deluxe express buses connecting over 60+ pickup hubs across the metropolis.
+          </p>
+        </div>
+
+        <!-- Boarding Point Quick Search -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="input-group">
+            <input 
+              type="text" 
+              class="form-control form-control-sm bg-light shadow-none" 
+              placeholder="Find nearest boarding point (e.g. Egmore, Tambaram, Anna Nagar)..." 
+              ng-model="vm.searchStop" 
+              ng-keyup="$event.keyCode == 13 && vm.findNearestStop()">
+            <button class="btn btn-primary btn-sm" type="button" ng-click="vm.findNearestStop()">
+              <i class="fa-solid fa-location-crosshairs me-1"></i> Locate Route
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Layout: Routes List on Left, Selected Route Timeline on Right -->
+    <div class="row g-4">
+      <!-- Routes List -->
+      <div class="col-lg-5">
+        <h5 class="fw-bold text-dark mb-3 font-sans d-flex align-items-center gap-2">
+          <i class="fa-solid fa-route text-primary"></i> Operating Express Routes
+        </h5>
+
+        <div class="d-flex flex-column gap-3">
+          <div 
+            class="card card-custom p-3 border-0 shadow-sm cursor-pointer card-hover" 
+            ng-repeat="route in vm.routes"
+            ng-class="{'border-primary border-2 bg-primary-subtle': vm.selectedRoute._id === route._id}"
+            ng-click="vm.selectRoute(route)"
+            style="cursor: pointer;">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="badge bg-primary fs-6 font-monospace">{{route.routeNumber}}</span>
+              <span class="badge bg-danger-subtle text-danger fw-bold">{{route.fee | currencyFormat}} / yr</span>
+            </div>
+
+            <h6 class="fw-bold text-dark mb-1">{{route.routeName}}</h6>
+            <div class="small text-muted mb-2">
+              <i class="fa-solid fa-location-dot text-primary me-1"></i> Starts: <strong>{{route.startingPoint}}</strong>
+            </div>
+
+            <div class="d-flex justify-content-between small text-muted pt-2 border-top border-light-subtle">
+              <span><i class="fa-solid fa-road me-1"></i> {{route.distance}}</span>
+              <span><i class="fa-solid fa-users me-1"></i> {{route.busCapacity}} Seater</span>
+              <span><i class="fa-solid fa-map-pin me-1"></i> {{route.stops.length}} Stops</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected Route Visual Timeline (Requested in Section 10) -->
+      <div class="col-lg-7" ng-if="vm.selectedRoute">
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white h-100">
+          <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
+            <div>
+              <span class="badge bg-primary font-monospace">{{vm.selectedRoute.routeNumber}}</span>
+              <h5 class="fw-bold text-dark mt-1 mb-0">{{vm.selectedRoute.routeName}}</h5>
+              <small class="text-muted"><i class="fa-solid fa-clock me-1"></i> Schedule: {{vm.selectedRoute.timing}}</small>
+            </div>
+            <div class="text-end">
+              <div class="fs-5 fw-bold text-primary">{{vm.selectedRoute.fee | currencyFormat}}</div>
+              <small class="text-muted font-monospace">Annual Transport Pass</small>
+            </div>
+          </div>
+
+          <!-- Route Highlights -->
+          <div class="row g-2 mb-4">
+            <div class="col-sm-4">
+              <div class="p-2 rounded bg-light border border-light-subtle text-center">
+                <small class="text-muted d-block font-monospace">DISTANCE</small>
+                <strong class="text-dark">{{vm.selectedRoute.distance}}</strong>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="p-2 rounded bg-light border border-light-subtle text-center">
+                <small class="text-muted d-block font-monospace">OPERATING DAYS</small>
+                <strong class="text-dark">Mon to Fri</strong>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="p-2 rounded bg-light border border-light-subtle text-center">
+                <small class="text-muted d-block font-monospace">DRIVER CONTACT</small>
+                <strong class="text-dark">{{vm.selectedRoute.driverContact.phone}}</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- VISUAL ROUTE TIMELINE (College -> Stop 1 -> Stop 2 -> Stop 3...) -->
+          <h6 class="fw-bold text-dark mb-3 font-sans">
+            <i class="fa-solid fa-timeline text-primary me-2"></i>Sequential Boarding Point Timeline
+          </h6>
+
+          <div class="timeline-vertical ps-4 mb-4">
+            <div class="timeline-step" ng-repeat="stop in vm.selectedRoute.stops" ng-class="{'endpoint': $last}">
+              <div class="timeline-indicator">
+                {{stop.order || ($index + 1)}}
+              </div>
+              <div class="p-3 rounded-3 bg-light border border-light-subtle">
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                  <h6 class="fw-bold text-dark mb-0">{{stop.stopName}}</h6>
+                  <span class="badge bg-primary text-white font-monospace">{{stop.time}}</span>
+                </div>
+                <small class="text-muted" ng-if="stop.landmark">
+                  <i class="fa-solid fa-map-pin text-primary me-1"></i> Landmark: {{stop.landmark}}
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Safety & Security Guidelines -->
+          <div class="p-3 rounded-3 bg-info-subtle border border-info-subtle text-info-emphasis small mt-auto">
+            <i class="fa-solid fa-shield-halved me-1"></i> <strong>Safety Note:</strong> All buses are equipped with GPS live tracking, speed governors (limit 50 km/h), first-aid kits, and emergency SOS buttons.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

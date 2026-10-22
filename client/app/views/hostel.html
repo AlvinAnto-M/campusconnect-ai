@@ -1,0 +1,154 @@
+<!-- CAMPUSCONNECT AI - Hostel Module View -->
+<div class="container-fluid px-0">
+  <loading-spinner is-loading="vm.isLoading" message="Loading residential hostels and mess specifications..."></loading-spinner>
+
+  <div ng-if="!vm.isLoading">
+    <!-- Header Banner -->
+    <div class="card card-custom p-4 mb-4 border-0 shadow-sm bg-white">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div>
+          <h3 class="fw-bold mb-1 text-dark font-sans">
+            <i class="fa-solid fa-hotel text-warning me-2"></i>Campus Residential Halls & Dining
+          </h3>
+          <p class="text-muted mb-0 small">
+            State-of-the-art secure on-campus residences with modern dining, Wi-Fi 6, air-conditioned rooms, and 24/7 student care.
+          </p>
+        </div>
+
+        <!-- Hostel Block Switcher Pills -->
+        <div class="btn-group p-1 bg-light rounded-pill border border-light-subtle" role="group">
+          <button 
+            type="button" 
+            class="btn btn-sm rounded-pill px-3" 
+            ng-class="{'btn-primary': vm.selectedHostel.type === 'Boys', 'btn-light': vm.selectedHostel.type !== 'Boys'}"
+            ng-click="vm.selectHostel(vm.hostels[0])">
+            <i class="fa-solid fa-person text-info me-1"></i> Boys Hostel Block
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-sm rounded-pill px-3" 
+            ng-class="{'btn-primary': vm.selectedHostel.type === 'Girls', 'btn-light': vm.selectedHostel.type !== 'Girls'}"
+            ng-click="vm.selectHostel(vm.hostels[1])">
+            <i class="fa-solid fa-person-dress text-danger me-1"></i> Girls Hostel Block
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Hostel Block Details -->
+    <div class="row g-4 mb-4" ng-if="vm.selectedHostel">
+      <!-- Main Overview & Room Options -->
+      <div class="col-lg-8">
+        <!-- Overview Card -->
+        <div class="card card-custom p-4 mb-4 border-0 shadow-sm bg-white">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+              <span class="badge bg-warning-subtle text-warning fw-bold mb-1">{{vm.selectedHostel.type}} Residential Hall</span>
+              <h4 class="fw-bold text-dark mb-0">{{vm.selectedHostel.hostelName}}</h4>
+            </div>
+            <div class="text-end">
+              <span class="badge bg-success fs-6 px-3 py-2 rounded-pill">
+                {{vm.selectedHostel.availableBeds}} Vacant Beds
+              </span>
+              <div class="text-muted small mt-1 font-monospace">Capacity: {{vm.selectedHostel.capacity}} Residents</div>
+            </div>
+          </div>
+
+          <h6 class="fw-bold text-dark mb-3 font-sans">
+            <i class="fa-solid fa-bed text-primary me-2"></i>Room Accommodation Categories & Tariffs
+          </h6>
+          <div class="row g-3">
+            <div class="col-md-4" ng-repeat="room in vm.selectedHostel.roomTypes">
+              <div class="p-3 rounded-3 bg-light border border-light-subtle h-100 d-flex flex-direction-column justify-content-between">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge" ng-class="room.isAc ? 'bg-info text-dark' : 'bg-secondary-subtle text-secondary'">
+                      {{room.isAc ? 'AC Deluxe' : 'Non-AC'}}
+                    </span>
+                    <span class="badge bg-success-subtle text-success small">Open</span>
+                  </div>
+                  <h6 class="fw-bold text-dark mb-1">{{room.typeName}}</h6>
+                  <div class="small text-muted mb-2 font-monospace">{{room.occupancy}} Students / Room</div>
+                </div>
+                <div>
+                  <div class="fs-5 fw-bold text-primary mb-2">{{room.fee | currencyFormat}} <small class="text-muted fs-6">/ yr</small></div>
+                  <button type="button" class="btn btn-outline-primary btn-sm rounded-pill w-100" ng-click="vm.requestBookingInfo(room)">
+                    Enquire Room
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Amenities & Facilities Grid -->
+        <div class="card card-custom p-4 mb-4 border-0 shadow-sm bg-white">
+          <h5 class="fw-bold text-dark mb-3 font-sans">
+            <i class="fa-solid fa-wand-magic-sparkles text-primary me-2"></i>Hostel Amenities & Living Infrastructure
+          </h5>
+          <div class="row g-3">
+            <div class="col-md-6" ng-repeat="fac in vm.selectedHostel.facilities">
+              <div class="p-2 rounded bg-light border border-light-subtle d-flex align-items-center gap-2">
+                <i class="fa-solid fa-circle-check text-success"></i>
+                <span class="small fw-semibold text-dark">{{fac}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mess & Dining Details -->
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white">
+          <h5 class="fw-bold text-dark mb-3 font-sans">
+            <i class="fa-solid fa-utensils text-success me-2"></i>Dining Hall & Hygienic Mess Facility
+          </h5>
+          <div class="p-3 rounded-3 bg-light border border-light-subtle mb-3">
+            <div class="fw-bold text-dark mb-1">Cuisine Type: {{vm.selectedHostel.messDetails.messType}}</div>
+            <p class="text-muted small mb-2"><i class="fa-solid fa-clock me-1"></i> {{vm.selectedHostel.messDetails.timings}}</p>
+            <div class="small text-dark mb-2"><strong>Dietary Care:</strong> {{vm.selectedHostel.messDetails.dietaryNotes}}</div>
+          </div>
+
+          <small class="text-muted d-block font-monospace mb-2">SAMPLE WEEKLY MENU HIGHLIGHTS</small>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="badge bg-light text-dark border border-light-subtle p-2 px-3" ng-repeat="dish in vm.selectedHostel.messDetails.cuisine">
+              <i class="fa-solid fa-bowl-rice text-warning me-1"></i> {{dish}}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Rules & Warden Contact -->
+      <div class="col-lg-4">
+        <!-- Warden Contact Card -->
+        <div class="card card-custom p-4 mb-4 border-0 shadow-sm bg-white">
+          <h6 class="fw-bold text-dark mb-3 font-sans">
+            <i class="fa-solid fa-address-book text-primary me-2"></i>Warden & Residential Support Desk
+          </h6>
+          <div class="text-center py-2">
+            <div class="stat-icon bg-primary-subtle text-primary mx-auto mb-2">
+              <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <h6 class="fw-bold text-dark mb-0">{{vm.selectedHostel.contact.wardenName}}</h6>
+            <small class="text-muted">Hostel Administration Office</small>
+          </div>
+          <div class="mt-3 p-3 bg-light rounded-3 border border-light-subtle small">
+            <div class="mb-2"><i class="fa-solid fa-phone text-primary me-2"></i> {{vm.selectedHostel.contact.phone}}</div>
+            <div><i class="fa-solid fa-envelope text-primary me-2"></i> {{vm.selectedHostel.contact.email}}</div>
+          </div>
+        </div>
+
+        <!-- Curfew & Code of Conduct Card -->
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white">
+          <h6 class="fw-bold text-dark mb-3 font-sans">
+            <i class="fa-solid fa-scale-balanced text-warning me-2"></i>Hostel Code of Conduct
+          </h6>
+          <ul class="list-unstyled mb-0 small">
+            <li class="mb-3 d-flex align-items-start gap-2" ng-repeat="rule in vm.selectedHostel.rules">
+              <i class="fa-solid fa-shield text-primary mt-1"></i>
+              <span>{{rule}}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

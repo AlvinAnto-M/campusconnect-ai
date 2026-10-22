@@ -1,0 +1,427 @@
+<!-- CAMPUSCONNECT AI - Admin Console View -->
+<div class="container-fluid px-0">
+  <!-- Header Banner -->
+  <div class="card card-custom p-4 mb-4 border-0 shadow-sm bg-white border-start border-danger border-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <h3 class="fw-bold mb-1 text-dark font-sans d-flex align-items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-danger"></i>
+          <span>Administrator Management Console</span>
+        </h3>
+        <p class="text-muted mb-0 small">
+          Authorized control center: Create, update and curate academic departments, historical cutoffs, placements, and transit data.
+        </p>
+      </div>
+
+      <!-- Navigation Pills -->
+      <ul class="nav nav-pills nav-pills-custom gap-2">
+        <li class="nav-item">
+          <button class="nav-link" ng-class="{'active': vm.activeTab === 'departments'}" ng-click="vm.activeTab = 'departments'">
+            <i class="fa-solid fa-building-columns me-1"></i> Departments ({{vm.departments.length}})
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" ng-class="{'active': vm.activeTab === 'cutoffs'}" ng-click="vm.activeTab = 'cutoffs'">
+            <i class="fa-solid fa-chart-line me-1"></i> Cutoffs ({{vm.cutoffs.length}})
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" ng-class="{'active': vm.activeTab === 'placements'}" ng-click="vm.activeTab = 'placements'">
+            <i class="fa-solid fa-briefcase me-1"></i> Placements ({{vm.placements.length}})
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" ng-class="{'active': vm.activeTab === 'transport'}" ng-click="vm.activeTab = 'transport'">
+            <i class="fa-solid fa-bus me-1"></i> Bus Routes ({{vm.routes.length}})
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- TAB 1: Department Management -->
+  <div ng-if="vm.activeTab === 'departments'">
+    <div class="row g-4">
+      <!-- Create / Edit Form -->
+      <div class="col-lg-5">
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white">
+          <h5 class="fw-bold text-dark mb-3 font-sans">
+            {{vm.editingDeptId ? 'Edit Department' : 'Add New Department'}}
+          </h5>
+
+          <form ng-submit="vm.saveDepartment()">
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">DEPARTMENT NAME</label>
+              <input type="text" class="form-control bg-light" placeholder="e.g. Biomedical Engineering" ng-model="vm.deptForm.departmentName" required>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">CODE</label>
+                <input type="text" class="form-control bg-light text-uppercase" placeholder="BME" ng-model="vm.deptForm.departmentCode" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">INTAKE SEATS</label>
+                <input type="number" class="form-control bg-light" placeholder="60" ng-model="vm.deptForm.intake" required>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">DEGREE</label>
+                <input type="text" class="form-control bg-light" placeholder="B.Tech" ng-model="vm.deptForm.degree" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">DURATION</label>
+                <input type="text" class="form-control bg-light" placeholder="4 Years" ng-model="vm.deptForm.duration" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">DESCRIPTION</label>
+              <textarea class="form-control bg-light" rows="3" placeholder="Department overview..." ng-model="vm.deptForm.description" required></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">FACILITIES / LABS (comma separated)</label>
+              <input type="text" class="form-control bg-light" placeholder="Sensors Lab, Tissue Lab, Neural Engineering Hub" ng-model="vm.deptForm.facilitiesStr">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">CAREER OPTIONS (comma separated)</label>
+              <input type="text" class="form-control bg-light" placeholder="Clinical Engineer, Bio-devices Analyst, R&D Specialist" ng-model="vm.deptForm.careerOptionsStr">
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary rounded-pill flex-grow-1 fw-bold shadow-sm">
+                <i class="fa-solid fa-save me-1"></i> {{vm.editingDeptId ? 'Update Department' : 'Save Department'}}
+              </button>
+              <button type="button" class="btn btn-outline-secondary rounded-pill" ng-if="vm.editingDeptId" ng-click="vm.resetDeptForm()">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Existing Departments Table -->
+      <div class="col-lg-7">
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white">
+          <h5 class="fw-bold text-dark mb-3 font-sans">Active Departments ({{vm.departments.length}})</h5>
+          <div class="table-responsive">
+            <table class="table table-hover table-custom mb-0">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Name</th>
+                  <th>Intake</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="dept in vm.departments">
+                  <td><span class="badge bg-primary">{{dept.departmentCode}}</span></td>
+                  <td class="fw-semibold text-dark">{{dept.departmentName}}</td>
+                  <td>{{dept.intake}} Seats</td>
+                  <td class="text-end">
+                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill me-1" ng-click="vm.editDepartment(dept)" title="Edit">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" ng-click="vm.deleteDepartment(dept._id)" title="Delete">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Cutoffs Management -->
+  <div ng-if="vm.activeTab === 'cutoffs'">
+    <div class="row g-4">
+      <!-- Add Cutoff Form -->
+      <div class="col-lg-5">
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white">
+          <h5 class="fw-bold text-dark mb-3 font-sans">Add Cutoff Benchmark Record</h5>
+          <form ng-submit="vm.saveCutoff()">
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">DEPARTMENT</label>
+              <select class="form-select bg-light" ng-model="vm.cutoffForm.departmentId" required>
+                <option value="">-- Choose Department --</option>
+                <option ng-repeat="d in vm.departments" value="{{d._id}}">{{d.departmentCode}} - {{d.departmentName}}</option>
+              </select>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">ACADEMIC YEAR</label>
+                <select class="form-select bg-light" ng-model="vm.cutoffForm.academicYear">
+                  <option value="2026">2026</option>
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                  <option value="2023">2023</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">CATEGORY</label>
+                <select class="form-select bg-light" ng-model="vm.cutoffForm.category">
+                  <option value="OC">OC</option>
+                  <option value="BC">BC</option>
+                  <option value="BCM">BCM</option>
+                  <option value="MBC">MBC</option>
+                  <option value="SC">SC</option>
+                  <option value="ST">ST</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">COUNSELLING QUOTA</label>
+              <select class="form-select bg-light" ng-model="vm.cutoffForm.quota">
+                <option value="General / State Quota">General / State Quota</option>
+                <option value="Management Quota">Management Quota</option>
+              </select>
+            </div>
+
+            <div class="row g-2 mb-4">
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">CLOSING CUTOFF (Max 200)</label>
+                <input type="number" step="0.25" class="form-control bg-light" ng-model="vm.cutoffForm.closingCutoff" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">CLOSING RANK</label>
+                <input type="number" class="form-control bg-light" ng-model="vm.cutoffForm.closingRank" required>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary rounded-pill w-100 py-2 fw-bold shadow-sm">
+              <i class="fa-solid fa-save me-1"></i> Save Cutoff Benchmark
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Cutoffs Table -->
+      <div class="col-lg-7">
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white">
+          <h5 class="fw-bold text-dark mb-3 font-sans">Recent Cutoff Records ({{vm.cutoffs.length}})</h5>
+          <div class="table-responsive" style="max-height: 520px; overflow-y: auto;">
+            <table class="table table-hover table-custom mb-0">
+              <thead>
+                <tr>
+                  <th>Department</th>
+                  <th>Year</th>
+                  <th>Cat</th>
+                  <th>Cutoff</th>
+                  <th>Rank</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="cut in vm.cutoffs | limitTo: 50">
+                  <td><span class="badge bg-primary-subtle text-primary">{{cut.departmentId.departmentCode}}</span></td>
+                  <td>{{cut.academicYear}}</td>
+                  <td><span class="badge bg-light text-dark border">{{cut.category}}</span></td>
+                  <td class="fw-bold">{{cut.closingCutoff | cutoffFormat}}</td>
+                  <td class="text-primary font-monospace">#{{cut.closingRank}}</td>
+                  <td class="text-end">
+                    <button type="button" class="btn btn-sm btn-link text-danger p-0" ng-click="vm.deleteCutoff(cut._id)">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: Placements Management -->
+  <div ng-if="vm.activeTab === 'placements'">
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white">
+          <h5 class="fw-bold text-dark mb-3 font-sans">Add Placement Recruiting Partner</h5>
+          <form ng-submit="vm.savePlacement()">
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">COMPANY NAME</label>
+              <input type="text" class="form-control bg-light" placeholder="e.g. NVIDIA Corporation" ng-model="vm.placementForm.companyName" required>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">INDUSTRY</label>
+                <select class="form-select bg-light" ng-model="vm.placementForm.industry">
+                  <option value="Product Companies">Product Companies</option>
+                  <option value="IT & Cloud Services">IT & Cloud Services</option>
+                  <option value="Core Engineering">Core Engineering</option>
+                  <option value="Finance & FinTech">Finance & FinTech</option>
+                  <option value="Automotive & EV">Automotive & EV</option>
+                  <option value="Consulting & Analytics">Consulting & Analytics</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">PACKAGE OFFERED</label>
+                <input type="text" class="form-control bg-light" placeholder="e.g. 18 - 26 LPA" ng-model="vm.placementForm.package" required>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">JOB DESIGNATION</label>
+                <input type="text" class="form-control bg-light" placeholder="Software Engineer" ng-model="vm.placementForm.jobRole" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">COMPENSATION TIER</label>
+                <select class="form-select bg-light" ng-model="vm.placementForm.tier">
+                  <option value="Super Dream (15+ LPA)">Super Dream (15+ LPA)</option>
+                  <option value="Dream (8-15 LPA)">Dream (8-15 LPA)</option>
+                  <option value="Regular (4-8 LPA)">Regular (4-8 LPA)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">OFFERS COUNT</label>
+                <input type="number" class="form-control bg-light" placeholder="10" ng-model="vm.placementForm.offersCount">
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">HIRING YEAR</label>
+                <select class="form-select bg-light" ng-model="vm.placementForm.hiringYear">
+                  <option value="2026">2026</option>
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label small fw-bold text-muted">ELIGIBLE DEPARTMENTS (comma separated)</label>
+              <input type="text" class="form-control bg-light" placeholder="CSE, IT, AI&DS, ECE" ng-model="vm.placementForm.deptStr">
+            </div>
+
+            <button type="submit" class="btn btn-primary rounded-pill w-100 py-2 fw-bold shadow-sm">
+              <i class="fa-solid fa-save me-1"></i> Save Recruiter Record
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Placements Table -->
+      <div class="col-lg-7">
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white">
+          <h5 class="fw-bold text-dark mb-3 font-sans">Corporate Recruiters ({{vm.placements.length}})</h5>
+          <div class="table-responsive">
+            <table class="table table-hover table-custom mb-0">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Industry</th>
+                  <th>Package</th>
+                  <th>Tier</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="p in vm.placements">
+                  <td class="fw-bold text-dark">{{p.companyName}}</td>
+                  <td class="small text-muted">{{p.industry}}</td>
+                  <td><span class="badge bg-success-subtle text-success">{{p.package}}</span></td>
+                  <td><span class="badge" ng-class="p.tier | tierBadgeClass">{{p.tier}}</span></td>
+                  <td class="text-end">
+                    <button type="button" class="btn btn-sm btn-link text-danger p-0" ng-click="vm.deletePlacement(p._id)">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: Bus Routes Management -->
+  <div ng-if="vm.activeTab === 'transport'">
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white">
+          <h5 class="fw-bold text-dark mb-3 font-sans">Add Transport Bus Route</h5>
+          <form ng-submit="vm.saveRoute()">
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">ROUTE NAME</label>
+              <input type="text" class="form-control bg-light" placeholder="e.g. Airport - Tambaram Express" ng-model="vm.routeForm.routeName" required>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">ROUTE NUMBER</label>
+                <input type="text" class="form-control bg-light" placeholder="Route 24E" ng-model="vm.routeForm.routeNumber" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">ANNUAL FEE</label>
+                <input type="number" class="form-control bg-light" placeholder="32000" ng-model="vm.routeForm.fee" required>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">STARTING POINT</label>
+                <input type="text" class="form-control bg-light" placeholder="Airport Terminal" ng-model="vm.routeForm.startingPoint" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-bold text-muted">DISTANCE</label>
+                <input type="text" class="form-control bg-light" placeholder="35 km" ng-model="vm.routeForm.distance" required>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary rounded-pill w-100 py-2 fw-bold shadow-sm">
+              <i class="fa-solid fa-save me-1"></i> Save Route
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Routes Table -->
+      <div class="col-lg-7">
+        <div class="card card-custom p-4 border-0 shadow-sm bg-white">
+          <h5 class="fw-bold text-dark mb-3 font-sans">Operating Bus Routes ({{vm.routes.length}})</h5>
+          <div class="table-responsive">
+            <table class="table table-hover table-custom mb-0">
+              <thead>
+                <tr>
+                  <th>Number</th>
+                  <th>Route Name</th>
+                  <th>Origin</th>
+                  <th>Annual Fee</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="r in vm.routes">
+                  <td><span class="badge bg-primary font-monospace">{{r.routeNumber}}</span></td>
+                  <td class="fw-semibold text-dark">{{r.routeName}}</td>
+                  <td class="small text-muted">{{r.startingPoint}}</td>
+                  <td>{{r.fee | currencyFormat}}</td>
+                  <td class="text-end">
+                    <button type="button" class="btn btn-sm btn-link text-danger p-0" ng-click="vm.deleteRoute(r._id)">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

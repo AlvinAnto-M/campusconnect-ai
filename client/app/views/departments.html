@@ -1,0 +1,196 @@
+<!-- CAMPUSCONNECT AI - Departments View -->
+<div class="container-fluid px-0">
+  <!-- Header Banner -->
+  <div class="card card-custom p-4 mb-4 border-0 shadow-sm bg-white">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <h3 class="fw-bold mb-1 text-dark font-sans">
+          <i class="fa-solid fa-building-columns text-primary me-2"></i>Academic Departments
+        </h3>
+        <p class="text-muted mb-0 small">
+          Explore autonomous undergraduate engineering disciplines, curriculum specializations, labs, and career pathways.
+        </p>
+      </div>
+
+      <!-- Comparison Tray Trigger (ng-if compareList.length > 0) -->
+      <div ng-if="vm.compareList.length > 0" class="d-flex align-items-center gap-2 bg-primary-subtle p-2 px-3 rounded-pill border border-primary-subtle">
+        <span class="badge bg-primary rounded-pill">{{vm.compareList.length}} / 3</span>
+        <span class="small fw-bold text-primary">Selected for Comparison</span>
+        <button type="button" class="btn btn-primary btn-sm rounded-pill px-3 ms-2" ng-click="vm.isComparing = true">
+          <i class="fa-solid fa-code-compare me-1"></i> Compare Selected
+        </button>
+        <button type="button" class="btn btn-link btn-sm text-danger p-0 ms-1" ng-click="vm.clearCompare()">
+          Clear
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filter Controls with AngularJS Two-Way Binding -->
+  <div class="card card-custom p-3 mb-4 border-0 shadow-sm bg-white">
+    <div class="row g-3 align-items-center">
+      <!-- Search Input -->
+      <div class="col-md-5">
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+          <input 
+            type="text" 
+            class="form-control bg-light border-start-0 shadow-none" 
+            placeholder="Search departments (e.g. Computer, AI, Electronics, Mechanical)..." 
+            ng-model="vm.searchQuery">
+        </div>
+      </div>
+
+      <!-- Degree Filter -->
+      <div class="col-md-3">
+        <select class="form-select bg-light shadow-none" ng-model="vm.selectedDegree">
+          <option value="all">All Degrees (B.Tech / B.E.)</option>
+          <option value="B.Tech">B.Tech Specializations</option>
+          <option value="B.E.">B.E. Classical Engineering</option>
+        </select>
+      </div>
+
+      <!-- Minimum Intake Filter -->
+      <div class="col-md-2">
+        <select class="form-select bg-light shadow-none" ng-model="vm.minIntake">
+          <option value="">Any Intake</option>
+          <option value="60">Intake >= 60 Seats</option>
+          <option value="120">Intake >= 120 Seats</option>
+          <option value="180">Intake >= 180 Seats</option>
+        </select>
+      </div>
+
+      <!-- Reset Filters Button -->
+      <div class="col-md-2 text-md-end">
+        <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill w-100" ng-click="vm.searchQuery=''; vm.selectedDegree='all'; vm.minIntake=''">
+          <i class="fa-solid fa-rotate-left me-1"></i> Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <loading-spinner is-loading="vm.isLoading" message="Fetching departments catalog..."></loading-spinner>
+
+  <!-- FEATURE 1: Smart Department Comparison Modal / Section (ng-if vm.isComparing) -->
+  <div class="card card-custom p-4 mb-4 border-0 shadow-lg border-primary border-2 bg-white" ng-if="vm.isComparing && vm.compareList.length > 0">
+    <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+      <h5 class="fw-bold text-primary mb-0 font-sans">
+        <i class="fa-solid fa-scale-balanced me-2"></i>Smart Multi-Department Comparison (Feature 1)
+      </h5>
+      <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" ng-click="vm.isComparing = false">
+        <i class="fa-solid fa-xmark me-1"></i> Close Comparison
+      </button>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-bordered table-custom mb-0">
+        <thead>
+          <tr class="table-light">
+            <th style="width: 20%;">Comparison Criteria</th>
+            <th ng-repeat="dept in vm.compareList" style="width: 26%;">
+              <div class="d-flex align-items-center justify-content-between">
+                <div>
+                  <span class="badge bg-primary">{{dept.departmentCode}}</span>
+                  <div class="fw-bold text-dark mt-1">{{dept.departmentName}}</div>
+                </div>
+                <button type="button" class="btn btn-sm btn-link text-danger p-0" ng-click="vm.toggleCompare(dept)" title="Remove">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="fw-bold text-muted bg-light">Degree Awarded</td>
+            <td ng-repeat="dept in vm.compareList"><span class="badge bg-secondary-subtle text-secondary">{{dept.degree}}</span> ({{dept.duration}})</td>
+          </tr>
+          <tr>
+            <td class="fw-bold text-muted bg-light">Sanctioned Intake</td>
+            <td ng-repeat="dept in vm.compareList"><strong class="text-primary fs-6">{{dept.intake}}</strong> Annual Seats</td>
+          </tr>
+          <tr>
+            <td class="fw-bold text-muted bg-light">Eligibility Criteria</td>
+            <td ng-repeat="dept in vm.compareList" class="small">{{dept.eligibility}}</td>
+          </tr>
+          <tr>
+            <td class="fw-bold text-muted bg-light">Specialized Facilities & Labs</td>
+            <td ng-repeat="dept in vm.compareList">
+              <ul class="list-unstyled small mb-0">
+                <li ng-repeat="fac in dept.facilities" class="mb-1">
+                  <i class="fa-solid fa-check-circle text-success me-1"></i> {{fac}}
+                </li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold text-muted bg-light">Key Career Pathways</td>
+            <td ng-repeat="dept in vm.compareList">
+              <div class="d-flex flex-wrap gap-1">
+                <span class="badge bg-light text-dark border border-light-subtle" ng-repeat="opt in dept.careerOptions">
+                  {{opt}}
+                </span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold text-muted bg-light">Department Head</td>
+            <td ng-repeat="dept in vm.compareList" class="small">
+              <strong>{{dept.hod.name}}</strong><br/>
+              <span class="text-muted">{{dept.hod.qualification}}</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold text-muted bg-light">Actions</td>
+            <td ng-repeat="dept in vm.compareList">
+              <a href="#/departments/{{dept._id}}" class="btn btn-outline-primary btn-sm rounded-pill w-100">
+                Full Details <i class="fa-solid fa-arrow-right ms-1"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Departments Grid (ng-repeat + Custom Filters) -->
+  <div class="row g-4" ng-if="!vm.isLoading">
+    <!-- Using searchFilter and departmentFilter custom filters! -->
+    <div class="col-md-6 col-xl-4" ng-repeat="dept in vm.departments | searchFilter:vm.searchQuery:['departmentName', 'departmentCode', 'description'] | departmentFilter:vm.selectedDegree:vm.minIntake">
+      <div class="position-relative h-100">
+        <!-- Reusable Custom Directive: <department-card> -->
+        <department-card 
+          department="dept" 
+          is-favorite="vm.isFavorite(dept._id)" 
+          on-toggle-favorite="vm.toggleFavorite(dept)">
+        </department-card>
+
+        <!-- Compare selection checkbox overlay button -->
+        <div class="position-absolute top-0 end-0 m-3 pt-5">
+          <button 
+            type="button" 
+            class="btn btn-sm rounded-pill px-2 py-1 shadow-sm" 
+            ng-class="{'btn-primary': vm.isInCompare(dept._id), 'btn-outline-secondary bg-white': !vm.isInCompare(dept._id)}"
+            ng-click="vm.toggleCompare(dept)"
+            title="Add to Comparison">
+            <i class="fa-solid" ng-class="{'fa-check': vm.isInCompare(dept._id), 'fa-plus': !vm.isInCompare(dept._id)}"></i>
+            <span class="small">{{vm.isInCompare(dept._id) ? 'Added' : 'Compare'}}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="col-12 text-center py-5" ng-if="(vm.departments | searchFilter:vm.searchQuery:['departmentName', 'departmentCode'] | departmentFilter:vm.selectedDegree:vm.minIntake).length === 0">
+      <div class="stat-icon bg-light text-muted mx-auto mb-2">
+        <i class="fa-solid fa-folder-open"></i>
+      </div>
+      <h6 class="fw-bold text-dark">No departments matched your filter</h6>
+      <p class="text-muted small">Try adjusting your search keyword or clearing the degree selection.</p>
+      <button type="button" class="btn btn-primary btn-sm rounded-pill px-3" ng-click="vm.searchQuery=''; vm.selectedDegree='all'; vm.minIntake=''">
+        View All Departments
+      </button>
+    </div>
+  </div>
+</div>
